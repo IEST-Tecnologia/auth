@@ -1,4 +1,4 @@
-# @iest-tecnologia/auth-next
+# @ti-iest/auth-next
 
 Keycloak sign-in for Next.js 16+ apps: one config file, four one-line
 files, and you're done.
@@ -26,23 +26,8 @@ Handlers and `proxy.ts`, never in Client Components.
 
 ### 1. Install
 
-For now the package is on GitHub Packages, which needs a token even to
-install. (It will move to npmjs.com under the same name; then this `.npmrc`
-and the token can simply be deleted.) Add an `.npmrc` next to the app's
-`package.json`:
-
-```
-@iest-tecnologia:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=${NPM_TOKEN}
-```
-
-`NPM_TOKEN` is a GitHub personal access token (classic) with the
-`read:packages` scope. Locally, export it in your shell; on Vercel, add it
-under **Project → Settings → Environment Variables** for all environments.
-Then:
-
 ```sh
-npm install @iest-tecnologia/auth-next server-only
+npm install @ti-iest/auth-next server-only
 ```
 
 `server-only` makes the build fail if the auth config (and its secret) is
@@ -53,7 +38,7 @@ ever imported from client code.
 ```ts
 // lib/auth.ts
 import "server-only";
-import { createAuth } from "@iest-tecnologia/auth-next";
+import { createAuth } from "@ti-iest/auth-next";
 
 export const auth = createAuth({
   keycloakUrl: "https://auth.example.com",
@@ -132,7 +117,7 @@ That's it: every page now requires a signed-in user. Read the user in any
 Server Component:
 
 ```tsx
-import { AUTH_ROUTES } from "@iest-tecnologia/auth-next";
+import { AUTH_ROUTES } from "@ti-iest/auth-next";
 import { auth } from "@/lib/auth";
 
 export default async function Home() {
@@ -238,7 +223,7 @@ const res = await fetch(`${process.env.API_URL}/orders`, {
 ### Login and logout links
 
 ```tsx
-import { AUTH_ROUTES, loginUrl } from "@iest-tecnologia/auth-next";
+import { AUTH_ROUTES, loginUrl } from "@ti-iest/auth-next";
 
 <a href={loginUrl("/reports")}>Entrar</a>
 <a href={AUTH_ROUTES.logout}>Sair</a>
