@@ -1,0 +1,36 @@
+# Publishes ts/ to GitHub Packages when a `ts/vX.Y.Z` tag is pushed. The tag's
+# version must match ts/package.json's "version".
+#
+# Temporary: this moves to npmjs.com once the @iest-tecnologia npm scope is
+# recovered. Then set registry-url to https://registry.npmjs.org, drop
+# `scope` and `packages: write`, use secrets.NPM_TOKEN, and set
+# package.json's publishConfig to { "access": "public" }.
+name: Publish auth-next
+
+on:
+  push:
+    tags: ["ts/v*"]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ts
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://npm.pkg.github.com
+          scope: "@iest-tecnologia"
+      - name: Check tag matches package version
+        run: test "ts/v$(node -p 'require("./package.json").version')" = "$GITHUB_REF_NAME"
+      - run: npm ci
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
