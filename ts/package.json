@@ -1,6 +1,6 @@
 {
   "name": "@ti-iest/auth-next",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Keycloak login (Authorization Code + PKCE) for IEST's Next.js apps: route handlers, page guards and the session-refreshing proxy.",
   "license": "UNLICENSED",
   "type": "module",
