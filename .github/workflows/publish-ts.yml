@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write # npm trusted publishing (OIDC)
 
 jobs:
   publish:
@@ -23,7 +24,7 @@ jobs:
           registry-url: https://registry.npmjs.org
       - name: Check tag matches package version
         run: test "ts/v$(node -p 'require("./package.json").version')" = "$GITHUB_REF_NAME"
+      # Trusted publishing needs npm >= 11.5.1; Node 22 ships npm 10.
+      - run: npm install -g npm@latest
       - run: npm ci
       - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
