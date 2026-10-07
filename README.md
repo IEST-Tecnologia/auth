@@ -6,7 +6,7 @@ per language, each versioned and released on its own:
 | Folder | Package | For |
 |---|---|---|
 | [`ts/`](ts/) | [`@ti-iest/auth-next`](ts/README.md) | Next.js 16+ frontends: sign-in, sessions, role guards |
-| `go/` | `github.com/IEST-Tecnologia/auth/go` | Go backends: bearer token verification (coming soon) |
+| [`go/`](go/) | [`github.com/IEST-Tecnologia/auth/go`](go/README.md) | Go backends: bearer token verification, role guards, Keycloak Admin API client |
 
 The two meet at the access token. The Next.js app keeps it in an httpOnly
 cookie and sends it to the backend as `Authorization: Bearer <token>`. The
@@ -15,7 +15,7 @@ backend verifies it against Keycloak.
 Neither library holds secrets. Each app passes its own Keycloak realm, client
 and credentials when it sets the library up.
 
-**Getting started:** see [`ts/README.md`](ts/README.md).
+**Getting started:** see [`ts/README.md`](ts/README.md) or [`go/README.md`](go/README.md).
 
 ## Releasing
 
