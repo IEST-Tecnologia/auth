@@ -73,28 +73,16 @@ Add a pair of these for each environment (localhost, preview, production).
 
 ### 4. Add the auth routes
 
-Next only discovers routes from files inside the app, so each route is a
-one-liner:
+One catch-all route serves login, callback and logout:
 
 ```ts
-// app/api/auth/login/route.ts
+// app/api/auth/[...auth]/route.ts
 import { auth } from "@/lib/auth";
-export const GET = auth.loginHandler;
+export const { GET } = auth.handlers;
 ```
 
-```ts
-// app/api/auth/callback/route.ts
-import { auth } from "@/lib/auth";
-export const GET = auth.callbackHandler;
-```
-
-```ts
-// app/api/auth/logout/route.ts
-import { auth } from "@/lib/auth";
-export const GET = auth.logoutHandler;
-```
-
-These paths are fixed (see [`AUTH_ROUTES`](#routes)). Don't move them.
+The paths it answers are fixed (see [`AUTH_ROUTES`](#routes)), so the file
+must live at `app/api/auth/`. Any other path under `/api/auth` gets a `404`.
 
 ### 5. Add the proxy
 
@@ -269,9 +257,7 @@ object below. Call it once per app.
 
 | Member | Mount as |
 |---|---|
-| `auth.loginHandler` | `GET` in `app/api/auth/login/route.ts` |
-| `auth.callbackHandler` | `GET` in `app/api/auth/callback/route.ts` |
-| `auth.logoutHandler` | `GET` in `app/api/auth/logout/route.ts` |
+| `auth.handlers` | `export const { GET } = auth.handlers` in `app/api/auth/[...auth]/route.ts` |
 | `auth.proxy` | `proxy` in `proxy.ts` |
 
 ### Reading the user

@@ -11,43 +11,33 @@ import { createUserHelpers } from "./user.js";
 export interface Auth {
   // --- Wiring (one line each in the app) ---
 
-  /** `GET /api/auth/login`: starts sign-in. Redirects to Keycloak and, once
-   *  the user signs in, back to the `?returnTo=` path (default `"/"`). A
-   *  `returnTo` that isn't a same-origin path is replaced with `"/"`. Build
-   *  links with `loginUrl()`.
+  /** The auth routes, all served from one catch-all route file:
+   *
+   *  - `GET /api/auth/login`: starts sign-in. Redirects to Keycloak and, once
+   *    the user signs in, back to the `?returnTo=` path (default `"/"`). A
+   *    `returnTo` that isn't a same-origin path is replaced with `"/"`.
+   *    Build links with `loginUrl()`.
+   *  - `GET /api/auth/callback`: where Keycloak sends the user after sign-in.
+   *    Register `${appUrl}/api/auth/callback` in the client's "Valid redirect
+   *    URIs". On success it stores the tokens in cookies and redirects to
+   *    `returnTo`. On failure it redirects to `/?error=<reason>`, where the
+   *    reason is Keycloak's error description, `invalid_callback`,
+   *    `state_mismatch` or `token_exchange_failed`.
+   *  - `GET /api/auth/logout`: signs out. Revokes the refresh token, clears
+   *    the auth cookies and ends the Keycloak SSO session, then returns to
+   *    `${appUrl}/`. Register that URL in the client's "Valid post logout
+   *    redirect URIs". Link to it with `AUTH_ROUTES.logout`.
+   *
+   *  Any other path under `/api/auth` gets a `404`.
    *
    *  @example
-   *  // app/api/auth/login/route.ts
+   *  // app/api/auth/[...auth]/route.ts
    *  import { auth } from "@/lib/auth";
-   *  export const GET = auth.loginHandler;
+   *  export const { GET } = auth.handlers;
    */
-  loginHandler(request: NextRequest): Promise<NextResponse>;
-
-  /** `GET /api/auth/callback`: where Keycloak sends the user after sign-in.
-   *  Register `${appUrl}/api/auth/callback` in the client's "Valid redirect
-   *  URIs". On success it stores the tokens in cookies and redirects to
-   *  `returnTo`. On failure it redirects to `/?error=<reason>`, where the
-   *  reason is Keycloak's error description, `invalid_callback`,
-   *  `state_mismatch` or `token_exchange_failed`.
-   *
-   *  @example
-   *  // app/api/auth/callback/route.ts
-   *  import { auth } from "@/lib/auth";
-   *  export const GET = auth.callbackHandler;
-   */
-  callbackHandler(request: NextRequest): Promise<NextResponse>;
-
-  /** `GET /api/auth/logout`: signs out. Revokes the refresh token, clears
-   *  the auth cookies and ends the Keycloak SSO session, then returns to
-   *  `${appUrl}/`. Register that URL in the client's "Valid post logout
-   *  redirect URIs". Link to it with `AUTH_ROUTES.logout`.
-   *
-   *  @example
-   *  // app/api/auth/logout/route.ts
-   *  import { auth } from "@/lib/auth";
-   *  export const GET = auth.logoutHandler;
-   */
-  logoutHandler(): Promise<NextResponse>;
+  handlers: {
+    GET(request: NextRequest): Promise<NextResponse>;
+  };
 
   /** Guards every page the proxy matcher covers. A valid access token passes
    *  through, an expired one is refreshed silently, and anything else goes

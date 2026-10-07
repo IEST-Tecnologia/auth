@@ -16,6 +16,7 @@ import {
   revokeToken,
 } from "./keycloak.js";
 import { generateCodeVerifier, generateState } from "./pkce.js";
+import { AUTH_ROUTES } from "./routes.js";
 
 export function createHandlers(getConfig: () => ResolvedConfig) {
   async function loginHandler(request: NextRequest): Promise<NextResponse> {
@@ -87,5 +88,22 @@ export function createHandlers(getConfig: () => ResolvedConfig) {
     return NextResponse.redirect(new URL("/", config.appUrl));
   }
 
-  return { loginHandler, callbackHandler, logoutHandler };
+  // One entry point for app/api/auth/[...auth]/route.ts, dispatching on the
+  // fixed paths in AUTH_ROUTES. Trailing slashes are tolerated so apps with
+  // `trailingSlash: true` still match.
+  async function GET(request: NextRequest): Promise<NextResponse> {
+    const path = request.nextUrl.pathname.replace(/\/+$/, "");
+    switch (path) {
+      case AUTH_ROUTES.login:
+        return loginHandler(request);
+      case AUTH_ROUTES.callback:
+        return callbackHandler(request);
+      case AUTH_ROUTES.logout:
+        return logoutHandler();
+      default:
+        return NextResponse.json({ error: "Not Found" }, { status: 404 });
+    }
+  }
+
+  return { handlers: { GET } };
 }
