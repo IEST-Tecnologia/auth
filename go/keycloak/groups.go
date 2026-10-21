@@ -18,6 +18,13 @@ var ErrGroupNotFound = errors.New("no group with this ID exists in Keycloak")
 type Group struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
+
+	// Attributes holds the group's custom Keycloak attributes (Group ->
+	// Attributes in the admin console), each a list of string values. Only
+	// populated by Group (the single-group lookup); UserPrimaryGroup and
+	// GroupMembers use list endpoints that return the brief representation,
+	// which omits attributes.
+	Attributes map[string][]string `json:"attributes,omitempty"`
 }
 
 // Group returns the realm's group with the given ID, or ErrGroupNotFound when
