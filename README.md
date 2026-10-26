@@ -5,7 +5,7 @@ per language, each versioned and released on its own:
 
 | Folder | Package | For |
 |---|---|---|
-| [`ts/`](ts/) | [`@ti-iest/auth-next`](ts/README.md) | Next.js 16+ frontends: sign-in, sessions, role guards |
+| [`ts/`](ts/) | [`@iest-tecnologia/auth`](ts/README.md) | Next.js 16+ frontends: sign-in, sessions, role guards |
 | [`go/`](go/) | [`github.com/IEST-Tecnologia/auth/go`](go/README.md) | Go backends: bearer token verification, role guards, Keycloak Admin API client |
 
 The two meet at the access token. The Next.js app keeps it in an httpOnly

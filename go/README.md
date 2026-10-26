@@ -1,7 +1,7 @@
 # github.com/IEST-Tecnologia/auth/go
 
 Keycloak access-token verification for Go backends. It's the server-side
-partner of [`@ti-iest/auth-next`](../ts/README.md): the Next.js app sends
+partner of [`@iest-tecnologia/auth`](../ts/README.md): the Next.js app sends
 `Authorization: Bearer <token>`, and this library checks it.
 
 - **Verification:** signature (keys from the realm's discovery document),

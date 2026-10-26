@@ -1,5 +1,11 @@
 # Publishes ts/ to npmjs.com when a `ts/vX.Y.Z` tag is pushed. The tag's
 # version must match ts/package.json's "version".
+#
+# Uses a classic automation token (NPM_TOKEN secret) rather than trusted
+# publishing (OIDC): trusted publishing can only be configured for a package
+# that already exists on npm, and @iest-tecnologia/auth is new. Once it's
+# been published once, this can switch back to OIDC (see the ts/v0.1.x
+# history of this file) if desired.
 name: Publish auth-next
 
 on:
@@ -8,7 +14,6 @@ on:
 
 permissions:
   contents: read
-  id-token: write # npm trusted publishing (OIDC)
 
 jobs:
   publish:
@@ -24,7 +29,7 @@ jobs:
           registry-url: https://registry.npmjs.org
       - name: Check tag matches package version
         run: test "ts/v$(node -p 'require("./package.json").version')" = "$GITHUB_REF_NAME"
-      # Trusted publishing needs npm >= 11.5.1; Node 22 ships npm 10.
-      - run: npm install -g npm@latest
       - run: npm ci
-      - run: npm stage publish
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

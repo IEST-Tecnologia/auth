@@ -172,7 +172,7 @@ export interface Auth {
  *  @example
  *  // lib/auth.ts
  *  import "server-only";
- *  import { createAuth } from "@ti-iest/auth-next";
+ *  import { createAuth } from "@iest-tecnologia/auth";
  *
  *  export const auth = createAuth({
  *    keycloakUrl: "https://auth.example.com",

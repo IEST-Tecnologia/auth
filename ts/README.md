@@ -1,4 +1,4 @@
-# @ti-iest/auth-next
+# @iest-tecnologia/auth
 
 Keycloak sign-in for Next.js 16+ apps: one config file, four one-line
 files, and you're done.
@@ -27,7 +27,7 @@ Handlers and `proxy.ts`, never in Client Components.
 ### 1. Install
 
 ```sh
-npm install @ti-iest/auth-next server-only
+npm install @iest-tecnologia/auth server-only
 ```
 
 `server-only` makes the build fail if the auth config (and its secret) is
@@ -38,7 +38,7 @@ ever imported from client code.
 ```ts
 // lib/auth.ts
 import "server-only";
-import { createAuth } from "@ti-iest/auth-next";
+import { createAuth } from "@iest-tecnologia/auth";
 
 export const auth = createAuth({
   keycloakUrl: "https://auth.example.com",
@@ -105,7 +105,7 @@ That's it: every page now requires a signed-in user. Read the user in any
 Server Component:
 
 ```tsx
-import { AUTH_ROUTES } from "@ti-iest/auth-next";
+import { AUTH_ROUTES } from "@iest-tecnologia/auth";
 import { auth } from "@/lib/auth";
 
 export default async function Home() {
@@ -211,7 +211,7 @@ const res = await fetch(`${process.env.API_URL}/orders`, {
 ### Login and logout links
 
 ```tsx
-import { AUTH_ROUTES, loginUrl } from "@ti-iest/auth-next";
+import { AUTH_ROUTES, loginUrl } from "@iest-tecnologia/auth";
 
 <a href={loginUrl("/reports")}>Entrar</a>
 <a href={AUTH_ROUTES.logout}>Sair</a>
@@ -356,7 +356,7 @@ callback shape:
 ## Release
 
 Bump `version` in `package.json`, commit, then tag with the `ts/` prefix and
-push. `.github/workflows/publish-ts.yml` publishes it to GitHub Packages:
+push. `.github/workflows/publish-ts.yml` publishes it to npmjs.com:
 
 ```sh
 git tag ts/v0.1.0 && git push origin ts/v0.1.0
