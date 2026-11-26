@@ -244,3 +244,44 @@ func TestGroupResolver(t *testing.T) {
 		t.Errorf("group = %+v", group)
 	}
 }
+
+func TestGroupMembersCarryAttributes(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.Method == http.MethodPost && r.URL.Path == "/realms/iest/protocol/openid-connect/token":
+			json.NewEncoder(w).Encode(map[string]any{
+				"access_token": "fake-admin-token",
+				"expires_in":   60,
+			})
+		case r.Method == http.MethodGet && r.URL.Path == "/admin/realms/iest/groups/group-1/members":
+			// The brief representation leaves attributes out.
+			if got := r.URL.Query().Get("briefRepresentation"); got != "false" {
+				t.Errorf("briefRepresentation = %q, want %q", got, "false")
+			}
+			json.NewEncoder(w).Encode([]Member{
+				{ID: "u1", Username: "ana", Enabled: true, Attributes: map[string][]string{"period": {"Tarde"}}},
+				{ID: "u2", Username: "bia", Enabled: true},
+				{ID: "u3", Username: "off", Enabled: false},
+			})
+		default:
+			t.Fatalf("unexpected request: %s %s", r.Method, r.URL.Path)
+		}
+	}))
+	defer srv.Close()
+
+	client := NewAdminClient(srv.URL, "iest", "my-app", "s3cr3t")
+
+	members, err := client.GroupMembers(context.Background(), "group-1")
+	if err != nil {
+		t.Fatalf("GroupMembers returned error: %v", err)
+	}
+	if len(members) != 2 {
+		t.Fatalf("got %d members, want 2 (disabled user skipped)", len(members))
+	}
+	if got := members[0].Attribute("period"); got != "Tarde" {
+		t.Errorf("members[0].Attribute(period) = %q, want %q", got, "Tarde")
+	}
+	if got := members[1].Attribute("period"); got != "" {
+		t.Errorf("members[1].Attribute(period) = %q, want empty", got)
+	}
+}

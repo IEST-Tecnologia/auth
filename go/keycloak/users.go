@@ -22,6 +22,20 @@ type Member struct {
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
 	Enabled   bool   `json:"enabled"`
+	// Attributes holds the user's custom Keycloak attributes (Users ->
+	// Attributes in the admin console, or user-profile fields), each a list
+	// of string values. Present on every lookup — User, GroupMembers and
+	// UsersWithClientRole all request the full representation.
+	Attributes map[string][]string `json:"attributes,omitempty"`
+}
+
+// Attribute returns the first value of the named attribute, or "" when the
+// user has none.
+func (m Member) Attribute(name string) string {
+	if values := m.Attributes[name]; len(values) > 0 {
+		return values[0]
+	}
+	return ""
 }
 
 // DisplayName returns the member's full name, falling back to the username

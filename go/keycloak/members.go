@@ -8,6 +8,9 @@ import (
 	"net/url"
 )
 
+// Member listings ask for briefRepresentation=false: the brief form leaves
+// out attributes, which callers read (e.g. a user's work period).
+
 // memberPageSize is how many members are requested per Admin API call.
 // Keycloak caps a page server-side anyway; paging keeps a large team from
 // being silently truncated.
@@ -43,7 +46,7 @@ func (c *AdminClient) GroupMembers(ctx context.Context, groupID string) ([]Membe
 }
 
 func (c *AdminClient) groupMembersPage(ctx context.Context, token, groupID string, first int) ([]Member, error) {
-	reqURL := fmt.Sprintf("%s/admin/realms/%s/groups/%s/members?briefRepresentation=true&first=%d&max=%d",
+	reqURL := fmt.Sprintf("%s/admin/realms/%s/groups/%s/members?briefRepresentation=false&first=%d&max=%d",
 		c.baseURL, url.PathEscape(c.realm), url.PathEscape(groupID), first, memberPageSize)
 
 	return c.getMembers(ctx, token, reqURL, "members of group "+groupID)
@@ -70,7 +73,7 @@ func (c *AdminClient) UsersWithClientRole(ctx context.Context, role string) ([]M
 
 	var out []Member
 	for first := 0; ; first += memberPageSize {
-		reqURL := fmt.Sprintf("%s/admin/realms/%s/clients/%s/roles/%s/users?briefRepresentation=true&first=%d&max=%d",
+		reqURL := fmt.Sprintf("%s/admin/realms/%s/clients/%s/roles/%s/users?briefRepresentation=false&first=%d&max=%d",
 			c.baseURL, url.PathEscape(c.realm), url.PathEscape(clientUUID), url.PathEscape(role), first, memberPageSize)
 
 		page, err := c.getMembers(ctx, token, reqURL, fmt.Sprintf("users of client role %q", role))
